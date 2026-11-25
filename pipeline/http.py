@@ -23,9 +23,18 @@ def _throttle() -> None:
     _last_request = time.monotonic()
 
 
+def _sleep(attempt: int, retry_after: str) -> None:
+    try:
+        wait = int(retry_after)
+    except (TypeError, ValueError):
+        wait = 0
+    wait = max(wait, 15 * (2 ** (attempt - 1)))
+    time.sleep(min(wait, 120))
+
+
 def _request(url: str, *, binary: bool = False):
     last_error = None
-    for attempt in range(config.MAX_RETRIES):
+    for attempt in range(1, config.MAX_RETRIES + 1):
         _throttle()
         try:
             response = _session.get(url, timeout=config.REQUEST_TIMEOUT_S)
@@ -33,11 +42,15 @@ def _request(url: str, *, binary: bool = False):
                 return response.content if binary else response.text
             if response.status_code in (429, 502, 503, 504):
                 last_error = "HTTP %d" % response.status_code
-            else:
-                raise RuntimeError("HTTP %d dla %s" % (response.status_code, url))
+                if attempt < config.MAX_RETRIES:
+                    _sleep(attempt, response.headers.get("Retry-After"))
+                continue
+            raise RuntimeError("HTTP %d dla %s: %s" % (
+                response.status_code, url, (response.text or "")[:200].replace("\n", " ")))
         except requests.RequestException as error:
-            last_error = str(error)
-        time.sleep(2 ** attempt)
+            last_error = str(error)[:200]
+            if attempt < config.MAX_RETRIES:
+                time.sleep(2 ** attempt)
     raise RuntimeError("Nie udalo sie pobrac %s: %s" % (url, last_error))
 
 

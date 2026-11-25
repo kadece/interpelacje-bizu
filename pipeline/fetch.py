@@ -16,7 +16,7 @@ def discover_portlet() -> str:
     html = http.get_text(config.SEARCH_URL)
     match = _PORTLET_RE.search(html)
     if not match:
-        raise RuntimeError("Nie znaleziono portletu wyszukiwarki na stronie BIP - zmiana layoutu?")
+        raise RuntimeError("Nie znaleziono portletu wyszukiwarki na stronie BIP - zmiana layoutu? HTML: " + html[:300])
     return match.group(1)
 
 

@@ -20,7 +20,7 @@ DISTRICT_URSUS_ID = 46406
 
 HTTP_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
-REQUEST_DELAY_S = 0.5
+REQUEST_DELAY_S = 1.5
 REQUEST_TIMEOUT_S = 30
 MAX_RETRIES = 4
 

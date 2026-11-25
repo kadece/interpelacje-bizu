@@ -3,6 +3,8 @@ import argparse
 import datetime as dt
 import json
 import os
+import sys
+import traceback
 
 from . import build, classify, config, fetch, http, ocr, parse, summarize
 
@@ -63,7 +65,7 @@ def _merge(existing, fields: dict, today: str) -> dict:
     return existing
 
 
-def main() -> None:
+def _main() -> None:
     parser = argparse.ArgumentParser(description="Aktualizacja danych Interpelacje BiZU")
     parser.add_argument("--full", action="store_true", help="pelny reskan stron szczegolow")
     parser.add_argument("--no-ocr", action="store_true", help="pomin OCR skanow")
@@ -144,6 +146,11 @@ def main() -> None:
     save_documents(documents)
     build.build_site(documents, radni)
 
+    for stale in ("diag.log", "bip_probe.log"):
+        stale_path = config.DATA_DIR / stale
+        if stale_path.exists():
+            stale_path.unlink()
+
     answered = sum(1 for d in documents if d.get("status") == "udzielono")
     weak = [d["id"] for d in documents
             if d.get("ocr_quality") is not None and d["ocr_quality"] < 0.5]
@@ -159,6 +166,17 @@ def main() -> None:
     if summary_path:
         with open(summary_path, "a", encoding="utf-8") as handle:
             handle.write(report)
+
+
+def main() -> None:
+    try:
+        _main()
+    except Exception:  # noqa: BLE001 - diagnostyka do repo; wyjatek propaguje dalej
+        config.DATA_DIR.mkdir(parents=True, exist_ok=True)
+        with open(config.DATA_DIR / "diag.log", "w", encoding="utf-8") as handle:
+            handle.write(dt.datetime.now().isoformat() + " argv=" + " ".join(sys.argv) + "\n\n")
+            traceback.print_exc(file=handle)
+        raise
 
 
 if __name__ == "__main__":
