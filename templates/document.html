@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block head %}<link rel="stylesheet" href="../style.css">{% endblock %}
+{% block title %}{{ document.typ|capitalize }} nr {{ document.numer }} — {{ document.radny }}{% endblock %}
+{% block content %}
+<article class="document">
+  <p class="breadcrumb"><a href="../index.html">← Wszystkie dokumenty</a></p>
+  <h1>{{ document.typ|capitalize }} nr {{ document.numer }}</h1>
+  <p class="doc-topic">{{ document.temat }}</p>
+  <dl class="meta">
+    <div><dt>Data złożenia</dt><dd>{{ document.data or "—" }}</dd></div>
+    <div><dt>Radny</dt><dd>{{ document.radny or "—" }}</dd></div>
+    <div><dt>Klub</dt><dd>{{ document.klub or "Klub Radnych „Bezpieczny i Zielony Ursus”" }}</dd></div>
+    <div><dt>Kadencja</dt><dd>{{ document.kadencja or "2024–2029" }}</dd></div>
+    <div><dt>Odpowiedź</dt><dd>{% if document.status == "udzielono" %}<span class="badge answered">udzielono</span>{% elif document.status %}<span class="badge pending">nie udzielono</span>{% else %}—{% endif %}</dd></div>
+    {% if document.obszary %}<div><dt>Obszar</dt><dd>{{ document.obszary|join(", ") }}</dd></div>{% endif %}
+    {% if document.tematy %}<div><dt>Tematy</dt><dd>{{ document.tematy|join(", ") }}</dd></div>{% endif %}
+  </dl>
+  <p class="sources">
+    Źródło: <a href="{{ document.url_bip }}" rel="noopener">strona dokumentu w BIP</a>
+    {% if document.pdf_pismo_url %} · <a href="{{ document.pdf_pismo_url }}" rel="noopener">PDF pisma</a>{% endif %}
+    {% if document.pdf_odpowiedz_url %} · <a href="{{ document.pdf_odpowiedz_url }}" rel="noopener">PDF odpowiedzi</a>{% endif %}
+  </p>
+
+  {% if document.podsumowanie_pismo %}
+  <section class="summary-box">
+    <h2>Podsumowanie</h2>
+    <p><strong>O co pyta radny:</strong> {{ document.podsumowanie_pismo }}</p>
+    {% if document.podsumowanie_odpowiedz %}<p><strong>Co odpowiedziano:</strong> {{ document.podsumowanie_odpowiedz }}</p>{% endif %}
+    <p class="fine-print">Podsumowanie wygenerowane automatycznie — dokument źródłowy jest rozstrzygający.</p>
+  </section>
+  {% endif %}
+
+  <h2>Treść pisma</h2>
+  {% if document.tresc %}
+  <pre class="doc-text">{{ document.tresc }}</pre>
+  {% if document.ocr_quality is defined and document.ocr_quality and document.ocr_quality < 0.5 %}
+  <p class="notice">⚠ Jakość rozpoznania tekstu jest niska — porównaj z oryginalnym PDF-em.</p>
+  {% endif %}
+  {% else %}
+  <p class="notice">Pełna treść dostępna w <a href="{{ document.pdf_pismo_url or document.url_bip }}" rel="noopener">oryginale (PDF, skan)</a>.</p>
+  {% endif %}
+
+  <h2>Odpowiedź</h2>
+  {% if document.status == "udzielono" %}
+    {% if document.tresc_odpowiedzi %}
+    <pre class="doc-text">{{ document.tresc_odpowiedzi }}</pre>
+    {% else %}
+    <p class="notice">Treść odpowiedzi dostępna w <a href="{{ document.pdf_odpowiedz_url }}" rel="noopener">oryginale (PDF, skan)</a>.</p>
+    {% endif %}
+  {% else %}
+  <p class="notice">Zarząd Dzielnicy nie udzielił jeszcze odpowiedzi (stan na {{ document.updated or "?" }}).</p>
+  {% endif %}
+</article>
+{% endblock %}

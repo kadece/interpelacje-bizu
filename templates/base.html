@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% block head %}{% endblock %}
+<title>{% block title %}Interpelacje BiZU - Rada Dzielnicy Ursus{% endblock %}</title>
+<meta name="description" content="Interpelacje i zapytania klubu BiZU (Bezpieczny i Zielony Ursus) w Radzie Dzielnicy Ursus, kadencja 2024-2029. Pełne teksty, odpowiedzi, filtry.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a7f37'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='sans-serif'%3EB%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="header">
+  <div class="container">
+    <a class="brand" href="index.html">Interpelacje <b>BiZU</b></a>
+    <p class="brand-sub">Klub Radnych „Bezpieczny i Zielony Ursus” · Rada Dzielnicy Ursus · kadencja 2024–2029</p>
+  </div>
+</header>
+<main class="container">
+{% block content %}{% endblock %}
+</main>
+<footer class="footer">
+  <div class="container">
+    <p>Serwis nieoficjalny. Dokumenty pochodzą z <a href="https://bip.warszawa.pl/web/ursus/interpelacje-zapytania-szukaj" rel="noopener">BIP m.st. Warszawy</a> — przy każdym dokumencie jest link do oryginału.</p>
+    <p>Teksty uzyskano OCR-em ze skanów — mogą zawierać błędy. Podsumowania (jeśli są) generuje automatycznie model językowy i mają charakter pomocniczy. Dane odświeżane co tydzień, we wtorki.</p>
+  </div>
+</footer>
+</body>
+</html>

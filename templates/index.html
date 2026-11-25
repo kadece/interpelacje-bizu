@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block head %}<link rel="stylesheet" href="style.css">{% endblock %}
+{% block content %}
+<section class="stats">
+  <div class="stat"><span class="stat-number">{{ stats.total }}</span><span class="stat-label">dokumentów BiZU</span></div>
+  <div class="stat"><span class="stat-number">{{ stats.answered }}</span><span class="stat-label">z odpowiedzią</span></div>
+  <div class="stat-group">
+    {% for radny, count in stats.by_radny.items() %}
+    <span class="stat-mini">{{ radny }}: <b>{{ count }}</b></span>
+    {% endfor %}
+  </div>
+</section>
+
+<noscript><p class="notice">Filtrowanie listy wymaga JavaScript. Każdy dokument ma też swoją podstronę.</p></noscript>
+
+<section class="filters" id="filters">
+  <input id="search" type="search" placeholder="Szukaj w tytułach i podsumowaniach…" aria-label="Szukaj">
+  <div class="filter-group" data-filter="obszar" data-label="Obszar"></div>
+  <div class="filter-group" data-filter="temat" data-label="Temat"></div>
+  <div class="filter-group" data-filter="radny" data-label="Radny"></div>
+  <div class="filter-group" data-filter="typ" data-label="Typ"></div>
+  <div class="filter-group" data-filter="status" data-label="Odpowiedź"></div>
+  <div class="filter-group" data-filter="rok" data-label="Rok"></div>
+  <button id="clear" class="btn-link" type="button">Wyczyść filtry</button>
+</section>
+
+<p class="results-info" id="count">…</p>
+<ol class="document-list" id="list"></ol>
+<script src="app.js"></script>
+{% endblock %}

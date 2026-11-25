@@ -16,15 +16,17 @@ var collator = new Intl.Collator("pl", { numeric: true, sensitivity: "base" });
 function uniqValues(key) {
   var out = [];
   docs.forEach(function (d) {
-    var value = d[key];
-    if (Array.isArray(value)) value.forEach(function (v) { if (v && out.indexOf(v) < 0) out.push(v); });
-    else if (value && out.indexOf(value) < 0) out.push(value);
+    fieldValues(d, key).forEach(function (v) { if (v && out.indexOf(v) < 0) out.push(v); });
   });
   return out.sort(collator.compare);
 }
 
 function fieldValues(doc, key) {
-  var value = key === "rok" ? (doc.data || "").slice(0, 4) : doc[key];
+  var value;
+  if (key === "rok") value = (doc.data || "").slice(0, 4);
+  else if (key === "obszar") value = doc.obszary;
+  else if (key === "temat") value = doc.tematy;
+  else value = doc[key];
   if (Array.isArray(value)) return value;
   return value ? [value] : [];
 }
