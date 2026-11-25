@@ -1,0 +1,20 @@
+2026-11-25T17:29:35.468704 argv=/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/run.py
+
+Traceback (most recent call last):
+  File "/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/run.py", line 173, in main
+    _main()
+  File "/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/run.py", line 87, in _main
+    listing = fetch.fetch_all(max_pages=args.max_pages or 200)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/fetch.py", line 64, in fetch_all
+    portlet = discover_portlet()
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/fetch.py", line 16, in discover_portlet
+    html = http.get_text(config.SEARCH_URL)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/http.py", line 58, in get_text
+    return _request(url, binary=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/interpelacje-bizu/interpelacje-bizu/pipeline/http.py", line 48, in _request
+    raise RuntimeError("HTTP %d dla %s: %s" % (
+RuntimeError: HTTP 403 dla https://bip.warszawa.pl/web/ursus/interpelacje-zapytania-szukaj: <!DOCTYPE html> <html lang="en">  <head>   <meta charset="UTF-8" />   <meta name="viewport" content="width=device-width, initial-scale=1.0" />   <meta http-equiv="X-UA-Compatible" content="ie=edge" />

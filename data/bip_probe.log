@@ -1,0 +1,3 @@
+date_utc: 2026-11-25T17:29:35Z
+probe_http: 403
+probe_body: <!DOCTYPE html> <html lang="en">  <head>   <meta charset="UTF-8" />   <meta name="viewport" content="width=device-width, initial-scale=1.0" />   <meta http-equiv="X-UA-Compatible" content="ie=edge" />   <title>Strona nie może zostać wyświetlona - Portal Informacyjny Urzędu m.st. Warszawy</title>   <style>     * {         box-sizing: border-box;     }      html {         min-height: 100%;     }
