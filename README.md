@@ -7,39 +7,42 @@ Dane pochodzą w całości z publicznego rejestru [BIP m.st. Warszawy](https://b
 ## Jak to działa
 
 ```
-BIP (wtorkowy cron) → pobranie listy → strony szczegółów (metadane + PDF)
-    → OCR skanów → tagowanie obszarów/tematów → podsumowania → strona (site/) → GitHub Pages
+Wtorkowy harmonogram (komputer użytkownika):
+BIP → lista → strony szczegółów (metadane + PDF)
+    → OCR skanów (Mistral OCR lub tesseract) → tagowanie → podsumowania
+    → strona statyczna w docs/ → git push → GitHub Pages (branch main, /docs)
 ```
+
+WAF portalu BIP odrzuca żądania z serwerów chmurowych (m.in. GitHub Actions zwraca HTTP 403) — dlatego pobieranie danych odbywa się z komputera użytkownika, a GitHub wyłącznie publikuje gotową stronę statyczną.
 
 - `pipeline/fetch.py` — stronicowanie przez wyszukiwarkę BIP (filtr: klub BiZU + kadencja 2024–2029),
 - `pipeline/parse.py` — metadane i linki PDF ze stron szczegółów,
 - `pipeline/ocr.py` — OCR: **Mistral OCR** (gdy ustawiony jest klucz `MISTRAL_API_KEY`) albo lokalny **tesseract** (j. polski),
 - `pipeline/classify.py` — obszary i tematy: słownik `config/taxonomy.yml` (+ model, gdy jest klucz),
 - `pipeline/summarize.py` — krótkie podsumowania pisma i odpowiedzi (wymaga klucza API),
-- `pipeline/build.py` — strona statyczna w `site/` (bez frameworków: Jinja2 + vanilla JS).
+- `pipeline/build.py` — strona statyczna w `docs/` (bez frameworków: Jinja2 + vanilla JS).
 
-Dane trwałe trzymają się w `data/interpelacje.json` — przy każdym przebiegu aktualizowane są tylko nowe dokumenty i odpowiedzi.
+Dane trwałe trzymają się w `data/interpelacje.json`, a gotową stronę w `docs/`; plik `secrets.env` (klucz API) jest ignorowany przez gita.
 
 ## Konfiguracja jednorazowa
 
-1. **GitHub Pages** (właściciel repo): *Settings → Pages → Build and deployment → Source: **GitHub Actions***.
-2. **Klucz Mistral API** (opcjonalny — bez niego OCR robi tesseract, a podsumowania nie są generowane):
-   - wygeneruj klucz w [console.mistral.ai](https://console.mistral.ai) (*API keys*, wymaga aktywacji płatności pay-as-you-go),
-   - dodaj go w *Settings → Secrets and variables → Actions → New repository secret*: nazwa **`MISTRAL_API_KEY`**.
-   - orientacyjny koszt: backfill ~750 skanów ≈ **5–7 USD**, potem ok. **5 USD rocznie** (OCR 4 USD/1000 stron, podsumowania grosze).
+1. **GitHub Pages**: *Settings → Pages → Build and deployment → Source: **Deploy from a branch*** → branch **main**, folder **/docs**.
+2. **Git**: przy pierwszym `git push` pojawia się jednorazowe logowanie GitHub w przeglądarce (kredencjał zapisuje się w menedżerze poświadczeń Windows).
+3. **Klucz Mistral API** (opcjonalny — bez niego strony dokumentów linkują tylko do PDF-ów, a podsumowania nie powstają): utwórz w katalogu repo plik `secrets.env` z linią `MISTRAL_API_KEY=...`. Klucz wygenerujesz w [console.mistral.ai](https://console.mistral.ai) (*API keys*; wymaga aktywacji płatności pay-as-you-go).
+   - orientacyjny koszt: pierwsze zapełnienie ~750 skanów ≈ **5–7 USD**, potem ok. **5 USD rocznie** (OCR 4 USD/1000 stron, podsumowania grosze).
 
-Workflow (`.github/workflows/update.yml`) uruchamia się: **we wtorki ok. 5:00–6:00 czasu polskiego** (cron UTC), po każdej zmianie kodu oraz ręcznie (*Actions → „Aktualizacja danych i strona” → Run workflow*, opcjonalnie z pełnym rescanem). Pierwszy przebieg pobiera wszystkie dokumenty od początku kadencji (maj 2024) i może potrwać ok. 1–2 h (OCR). Błędy tworzą zgłoszenie (issue) w repo.
+Aktualizacje uruchamia agent (Mistral Vibe) na komputerze użytkownika: **co tydzień we wtorki** (kontrolnie także w środy) oraz na żądanie. Wymaga włączonego Vibe; pominięty tydzień zostanie nadrobiony przy najbliższej sesji. Pipeline jest przyrostowy i można go uruchamiać dowolnie często.
 
 ## Uruchomienie lokalne
 
 ```bash
 pip install -r pipeline/requirements.txt
-python -m pipeline.run --max-pages 1 --max-docs 3   # próbka bez OCR domu (bez tesseract)
-python -m pipeline.run                               # pełny update (OCR wymaga tesseract + poppler)
+python -m pipeline.run --max-pages 1 --max-docs 3   # próbka (bez OCR)
+python -m pipeline.run                               # pełny update (OCR: Mistral/tesseract)
 python -m pipeline.run --build-only                  # tylko przebudowa strony
 ```
 
-Wynik: `data/interpelacje.json` + strona w `site/` (otwórz `site/index.html` przez dowolny serwer statyczny, np. `python -m http.server -d site`).
+Wynik: `data/interpelacje.json` + strona w `docs/` (otwórz `docs/index.html` przez dowolny serwer statyczny, np. `python -m http.server -d docs`).
 
 ## Ręczne korekty
 
@@ -48,4 +51,4 @@ Wynik: `data/interpelacje.json` + strona w `site/` (otwórz `site/index.html` pr
 
 ## Zastrzeżenia
 
-Serwis nieoficjalny, tworzony automatycznie. Teksty pochodzą z OCR skanów i mogą zawierać błędy; podsumowania generuje model językowy (zawsze oznaczone) — dokument źródłowy (linkowany) jest rozstrzygający. BIP m.st. Warszawy jest źródłem danych, a jego `robots.txt` nie zabrania pobierania; pipeline odpytuje z opóźnieniem 0,5 s między żądaniami.
+Serwis nieoficjalny, tworzony automatycznie. Teksty pochodzą z OCR skanów i mogą zawierać błędy; podsumowania generuje model językowy (zawsze oznaczone) — dokument źródłowy (linkowany) jest rozstrzygający. BIP m.st. Warszawy jest źródłem danych, a jego `robots.txt` nie zabrania pobierania; pipeline odpytuje z opóźnieniem 1,5 s między żądaniami.

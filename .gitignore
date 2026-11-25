@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
 pipeline/cache/
-site/
+secrets.env
+data/diag.log
+data/bip_probe.log

@@ -3,7 +3,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = REPO_ROOT / "data"
-SITE_DIR = REPO_ROOT / "site"
+SITE_DIR = REPO_ROOT / "docs"
 TEMPLATES_DIR = REPO_ROOT / "templates"
 STATIC_DIR = REPO_ROOT / "static"
 TAXONOMY_PATH = REPO_ROOT / "config" / "taxonomy.yml"

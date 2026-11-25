@@ -24,6 +24,7 @@ def build_site(documents: list, radni: list) -> None:
     )
     (config.SITE_DIR / "dokument").mkdir(parents=True, exist_ok=True)
     (config.SITE_DIR / "data").mkdir(exist_ok=True)
+    (config.SITE_DIR / ".nojekyll").write_text("", encoding="utf-8")
 
     index = []
     for d in documents:
