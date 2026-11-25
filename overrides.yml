@@ -1,0 +1,9 @@
+# Ręczne korekty nadpisują automat (klasyfikację i podsumowania).
+# Klucz = id dokumentu, np. "interpelacja-634". Przykład:
+#
+# interpelacja-634:
+#   obszary: ["Czechowice"]
+#   tematy: ["planowanie i inwestycje", "sprawy komunalne"]
+#
+# interpelacja-633:
+#   podsumowanie_pismo: "Krótki opis własny zamiast automatycznego."

@@ -1,0 +1,22 @@
+{
+  "klub": "Klub Radnych \"Bezpieczny i Zielony Ursus\"",
+  "dzielnica": "Ursus",
+  "kadencja": "2024-2029",
+  "radni": [
+    {
+      "nazwa": "Krzysztof Daukszewicz",
+      "slug": "daukszewicz-krzysztof",
+      "okreg": "Szamoty i Gołąbki"
+    },
+    {
+      "nazwa": "Karolina Sowińska",
+      "slug": "sowinska-karolina",
+      "okreg": "Szamoty i Gołąbki"
+    },
+    {
+      "nazwa": "Karol Bąkowski",
+      "slug": "bakowski-karol",
+      "okreg": "Czechowice i Skorosze"
+    }
+  ]
+}
