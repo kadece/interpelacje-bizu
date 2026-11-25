@@ -1,0 +1,87 @@
+name: Aktualizacja danych i strona
+
+on:
+  schedule:
+    - cron: "0 4 * * 2" # wtorki ok. 05:00-06:00 czasu polskiego
+  workflow_dispatch:
+    inputs:
+      full_rescan:
+        description: "Pełny reskan stron szczegółów"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - "pipeline/**"
+      - "config/**"
+      - "templates/**"
+      - "static/**"
+      - "data/**"
+      - ".github/workflows/update.yml"
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  issues: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Zależności systemowe (OCR)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr tesseract-ocr-pol
+      - name: Zależności Pythona
+        run: pip install -r pipeline/requirements.txt
+      - name: Aktualizacja danych (BIP → OCR → tagi → strona)
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: >-
+          python -m pipeline.run
+          ${{ (github.event_name == 'workflow_dispatch' && inputs.full_rescan == true) && '--full' || '' }}
+      - name: Zapisz zaktualizowane dane
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/interpelacje.json
+          if git diff --cached --quiet; then
+            echo "Brak nowych danych"
+          else
+            git commit -m "chore: aktualizacja danych interpelacji ($(date +%F))"
+            git push
+          fi
+      - name: Pages — konfiguracja
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Pages — artefakt strony
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Pages — publikacja
+        uses: actions/deploy-pages@v4
+
+  alert:
+    needs: update
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Zgłoś problem zgłoszeniem (issue)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST /repos/${{ github.repository }}/issues \
+            -f title="Nieudana aktualizacja danych ($(date -u +%F))" \
+            -f body="Aktualizacja interpelacji nie powiodła się: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --repo ${{ github.repository }}

@@ -1,0 +1,38 @@
+# Taksonomia: obszary dzielnicy Ursus i tematy.
+# "ulice" mapuje słowa z treści/tytułu pisma na obszar (dopasowanie fragmentu,
+# bez polskich znaków). Gdy ustawiony jest MISTRAL_API_KEY, brakujące etykiety
+# dopowiada model — zawsze tylko z listy "obszary" lub kluczy "tematy".
+# Listy możesz swobodnie edytować; ręczne korekty per dokument: overrides.yml.
+
+obszary:
+  - Centrum (Stary Ursus)
+  - Szamoty
+  - Czechowice
+  - Skorosze
+  - Gołąbki
+  - Niedźwiadek i Gawra
+  - Cała dzielnica / poza obszarami
+
+ulice:
+  Centrum (Stary Ursus): [Dzieci Warszawy, Jerozolimskie i Ursus]
+  Szamoty: [Szamot]
+  Czechowice: [Keniga, Kokoski, Macierzanki, Czechowic]
+  Skorosze: [Skorosz]
+  Gołąbki: [Gołąbk]
+  Niedźwiadek i Gawra: [Niedźwiadk, Gawr]
+
+tematy:
+  drogi i chodniki: [ulic, jezdni, chodnik, asfalt, przejsci, rondo, skrzyzowa, remont, nawierzchni, kraweznik, parking, jezdnie]
+  transport publiczny: [autobus, ztm, metro, przystanek, rozkladow, rozklad, mpk, kolej, pociag, wkd, skm, nocny linia]
+  rowery: [rower, veturilo, sciezka rowerowa]
+  zieleń i drzewa: [drzew, park, skwer, traw, zieleń, krzew, sadz, łąka, trawnik]
+  bezpieczeństwo: [bezpieczen, oswietleni, oświetleni, monitoring, policj, wypadk, predkosc, prędkość, patrol]
+  oświata: [szkol, szkoln, przedszkol, uczni, zerowk, żłobek, żlobek, zlobek, placowk]
+  sport i rekreacja: [boisk, orlik, silownia, siłownia, plywalni, pływalni, sport, rekreacyjn]
+  kultura: [bibliotek, dom kultury, koncert, wystaw, kulturaln, "domu kultury"]
+  porządek i czystość: [śmiec, smieci, czystosc, czystość, graffiti, porzadek, porządek, wysypisk, psow]
+  planowanie i inwestycje: [plan miejscow, mpzp, studium, inwestycj, przetarg, budowa, budowlan, projekt]
+  mieszkania: [mieszkan, czynsz, wspólnot, wspolnot, komunaln, zasobow mieszkaniow]
+  sprawy komunalne: [kanalizacj, wodociag, wodociąg, przeciek, hydrant, grzewcz, instalacj, klatce]
+  zdrowie: [przychodni, zdrowie, nfz, szczepie]
+  inne: []
